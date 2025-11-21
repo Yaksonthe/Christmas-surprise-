@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Surprise!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Mountains of Christmas', cursive;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Snowfall Background */
+        .snowflakes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: white;
+            font-size: 1em;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        /* Door Container */
+        .door-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+
+        .door-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .doors {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            max-height: 600px;
+            display: flex;
+        }
+
+        .door {
+            width: 50%;
+            background: linear-gradient(135deg, #2d5016 0%, #1a3d0a 100%);
+            border: 8px solid #8b4513;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5), 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+            cursor: pointer;
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .door-left {
+            border-right: 4px solid #8b4513;
+            transform-origin: left;
+        }
+
+        .door-right {
+            border-left: 4px solid #8b4513;
+            transform-origin: right;
+        }
+
+        .doors.open .door-left {
+            transform: translateX(-100%) rotateY(-15deg);
+        }
+
+        .doors.open .door-right {
+            transform: translateX(100%) rotateY(15deg);
+        }
+
+        /* Door Panels */
+        .door-panel {
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 70%;
+            height: 35%;
+            border: 3px solid #654321;
+            background: linear-gradient(135deg, #3d6b1f 0%, #2d5016 100%);
+            border-radius: 5px;
+        }
+
+        .door-panel:nth-child(2) {
+            top: 55%;
+        }
+
+        /* Bell */
+        .bell-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .bell {
+            font-size: 80px;
+            animation: bounce 2s infinite;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        .tap-text {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffd700;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            white-space: nowrap;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .arrow {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            animation: arrow-bounce 1s infinite;
+        }
+
+        @keyframes arrow-bounce {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, 10px); }
+        }
+
+        /* Main Content */
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px 20px 120px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1s ease;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .header {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: #fff;
+            text-shadow: 
+                3px 3px 0 #ff0000,
+                6px 6px 0 #00ff00,
+                9px 9px 20px rgba(0,0,0,0.5);
+            margin: 20px 0;
+            animation: rainbow 3s infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .festive-elements {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            margin: 40px 0;
+            gap: 20px;
+        }
+
+        .festive-item {
+            font-size: clamp(60px, 10vw, 120px);
+            animation: sway 3s infinite ease-in-out;
+        }
+
+        .festive-item:nth-child(1) { animation-delay: 0s; }
+        .festive-item:nth-child(2) { animation-delay: 0.5s; }
+        .festive-item:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .merry-christmas {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            color: #ffd700;
+            text-shadow: 
+                2px 2px 0 #ff0000,
+                4px 4px 0 #00ff00,
+                6px 6px 0 #0000ff,
+                8px 8px 20px rgba(0,0,0,0.5);
+            margin: 30px 0;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 
+                2px 2px 0 #ff0000,
+                4px 4px 0 #00ff00,
+                6px 6px 0 #0000ff,
+                8px 8px 20px rgba(0,0,0,0.5);
+            }
+            to { text-shadow: 
+                2px 2px 0 #ff0000,
+                4px 4px 0 #00ff00,
+                6px 6px 0 #0000ff,
+                8px 8px 40px rgba(255,215,0,0.8);
+            }
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 3px solid #ffd700;
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 100px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .countdown-number {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #ffd700;
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: #fff;
+            text-transform: uppercase;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Share Bar */
+        .share-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.5s ease;
+        }
+
+        .share-bar.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .share-button {
+            background: #ffd700;
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .share-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .share-input-container {
+            display: none;
+            margin-top: 15px;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .share-input-container.active {
+            display: flex;
+        }
+
+        .share-input {
+            padding: 12px 20px;
+            border: 3px solid #ffd700;
+            border-radius: 25px;
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: 16px;
+            min-width: 200px;
+            outline: none;
+        }
+
+        .share-go {
+            background: #ffd700;
+            color: #333;
+            border: none;
+            padding: 12px 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .share-go:hover {
+            transform: scale(1.05);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: 18px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 10000;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.5s;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .developer-credit {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.5s ease 1.5s;
+        }
+
+        .developer-credit.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .bell { font-size: 60px; }
+            .tap-text { font-size: 18px; top: 100px; }
+            .arrow { font-size: 30px; top: -40px; }
+            .festive-item { font-size: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Snowfall -->
+    <div class="snowflakes" id="snowflakes"></div>
+
+    <!-- Door Container -->
+    <div class="door-container" id="doorContainer">
+        <div class="doors" id="doors">
+            <div class="door door-left">
+                <div class="door-panel"></div>
+                <div class="door-panel"></div>
+            </div>
+            <div class="door door-right">
+                <div class="door-panel"></div>
+                <div class="door-panel"></div>
+            </div>
+            <div class="bell-container" id="bellContainer">
+                <div class="arrow">👇</div>
+                <div class="bell">🔔</div>
+                <div class="tap-text">Tap to Open</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="content">
+        <h1 class="header" id="header">Loading...</h1>
+        
+        <div class="festive-elements">
+            <div class="festive-item">🎅</div>
+            <div class="festive-item">⛄</div>
+            <div class="festive-item">🎄</div>
+        </div>
+
+        <div class="merry-christmas">🎄 Merry Christmas! 🎁</div>
+
+        <div class="countdown" id="countdown">
+            <div class="countdown-item">
+                <span class="countdown-number" id="days">00</span>
+                <span class="countdown-label">Days</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-number" id="hours">00</span>
+                <span class="countdown-label">Hours</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-number" id="minutes">00</span>
+                <span class="countdown-label">Minutes</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-number" id="seconds">00</span>
+                <span class="countdown-label">Seconds</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Bar -->
+    <div class="share-bar" id="shareBar">
+        <button class="share-button" id="shareButton">👇 Enter Your Name Here 👇</button>
+        <div class="share-input-container" id="shareInputContainer">
+            <input type="text" class="share-input" id="nameInput" placeholder="Your Name">
+            <button class="share-go" id="shareGo">Go!</button>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">Link copied to clipboard!</div>
+
+    <!-- Audio -->
+    <audio id="christmasMusic" loop>
+        <source src="Merry Christmas.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Developer Credit -->
+    <div class="developer-credit">Developed by Micah Yakubu</div>
+
+    <script>
+        // Create snowflakes
+        function createSnowflakes() {
+            const container = document.getElementById('snowflakes');
+            for (let i = 0; i < 50; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.innerHTML = '❄';
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                snowflake.style.opacity = Math.random();
+                snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                container.appendChild(snowflake);
+            }
+        }
+
+        // Get name from URL
+        function getNameFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('name') || 'Your Friend';
+        }
+
+        // Update header
+        function updateHeader() {
+            const name = getNameFromURL();
+            document.getElementById('header').textContent = `${name} is wishing you...`;
+        }
+
+        // Countdown timer
+        function updateCountdown() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            let christmas = new Date(currentYear, 11, 25);
+            
+            if (now > christmas) {
+                christmas = new Date(currentYear + 1, 11, 25);
+            }
+
+            const diff = christmas - now;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        // Open doors
+        function openDoors() {
+            const doors = document.getElementById('doors');
+            const doorContainer = document.getElementById('doorContainer');
+            const content = document.getElementById('content');
+            const shareBar = document.getElementById('shareBar');
+            const music = document.getElementById('christmasMusic');
+
+            doors.classList.add('open');
+            
+            setTimeout(() => {
+                doorContainer.classList.add('hidden');
+                content.classList.add('visible');
+                shareBar.classList.add('visible');
+                document.querySelector('.developer-credit').classList.add('visible');
+                
+                // Play music
+                music.play().catch(() => {
+                    console.log('Music autoplay blocked by browser');
+                });
+            }, 1000);
+        }
+
+        // Share functionality
+        function setupShare() {
+            const shareButton = document.getElementById('shareButton');
+            const shareInputContainer = document.getElementById('shareInputContainer');
+            const nameInput = document.getElementById('nameInput');
+            const shareGo = document.getElementById('shareGo');
+            const notification = document.getElementById('notification');
+
+            shareButton.addEventListener('click', () => {
+                shareInputContainer.classList.toggle('active');
+                if (shareInputContainer.classList.contains('active')) {
+                    nameInput.focus();
+                }
+            });
+
+            shareGo.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                if (name) {
+                    const url = window.location.origin + window.location.pathname + '?name=' + encodeURIComponent(name);
+                    
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(url).then(() => {
+                        notification.classList.add('show');
+                        setTimeout(() => {
+                            notification.classList.remove('show');
+                        }, 3000);
+                    });
+
+                    // Alternative: Open WhatsApp share
+                    // const whatsappUrl = `https://wa.me/?text=${encodeURIComponent('Check out this Christmas surprise! ' + url)}`;
+                    // window.open(whatsappUrl, '_blank');
+
+                    nameInput.value = '';
+                    shareInputContainer.classList.remove('active');
+                }
+            });
+
+            nameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    shareGo.click();
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createSnowflakes();
+            updateHeader();
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+            setupShare();
+
+            // Bell click handler
+            document.getElementById('bellContainer').addEventListener('click', openDoors);
+            document.getElementById('doors').addEventListener('click', openDoors);
+        });
+    </script>
+</body>
+</html>
